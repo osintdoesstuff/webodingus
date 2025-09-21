@@ -36,16 +36,18 @@
         <button onclick="checkPassword()">Enter</button>
     </div>
 
-    <script>
-        function checkPassword() {
-            var input = document.getElementById('pswd').value;
-            if(input.toUpperCase() === 'ADMIN') {
-                document.getElementById('message').innerText = "Oh, sorry, didn't realize you were the admin";
-            } else {
-                alert("Wrong password! Try again.");
-            }
-            document.getElementById('pswd').value = '';
+<script>
+    function checkPassword() {
+        var input = document.getElementById('pswd').value;
+        if(input.toUpperCase() === 'ADMIN') {
+            document.getElementById('message').innerText = "Oh, sorry, didn't realize you were the admin";
+            document.body.style.backgroundColor = 'blue';  // change background to blue
+        } else {
+            alert("Wrong password! Try again.");
         }
-    </script>
+        document.getElementById('pswd').value = '';
+    }
+</script>
+
 </body>
 </html>
