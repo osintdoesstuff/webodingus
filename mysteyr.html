@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mysteyr - XMSland</title>
+    <style>
+        body {
+            background-color: red;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        input {
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 1em;
+        }
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="message">YOU'RE NOT SUPPOSED TO BE HERE</h1>
+    <div>
+        <input type="text" id="pswd" placeholder="pswd">
+        <button onclick="checkPassword()">Enter</button>
+    </div>
+
+    <script>
+        function checkPassword() {
+            var input = document.getElementById('pswd').value;
+            if(input.toUpperCase() === 'ADMIN') {
+                document.getElementById('message').innerText = "Oh, sorry, didn't realize you were the admin";
+            } else {
+                alert("Wrong password! Try again.");
+            }
+            document.getElementById('pswd').value = '';
+        }
+    </script>
+</body>
+</html>
