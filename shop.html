@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shop - XMSland</title>
+<style>
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+    }
+    h1 {
+        color: #bb86fc;
+    }
+    .shop-item {
+        background-color: #1f1f1f;
+        margin: 10px auto;
+        padding: 15px;
+        border-radius: 6px;
+        width: 300px;
+        transition: background 0.2s;
+    }
+    .shop-item:hover {
+        background-color: #2c2c2c;
+    }
+    button {
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: #bb86fc;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #a36de0;
+    }
+    #balance {
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h1>XMSland Shop</h1>
+<p id="balance">Balance: 100 monies</p>
+
+<div class="shop-item">
+    <h3>Invisible Hat</h3>
+    <p>Cost: 20 monies</p>
+    <button onclick="buyItem('Invisible Hat',20)">Buy</button>
+</div>
+
+<div class="shop-item">
+    <h3>Useless Tick</h3>
+    <p>Cost: 15 monies</p>
+    <button onclick="buyItem('Useless Tick',15)">Buy</button>
+</div>
+
+<div class="shop-item">
+    <h3>XMSland Pro</h3>
+    <p>Cost: 50 monies</p>
+    <button onclick="buyItem('XMSland Pro',50)">Buy</button>
+</div>
+
+<div class="shop-item">
+    <h3>Money</h3>
+    <p>Cost: 10 monies, gives 15 in return</p>
+    <button onclick="buyMoney()">Buy Money</button>
+</div>
+
+<div class="shop-item">
+    <h3>Cryptocurrency</h3>
+    <p>Cost: 10 monies, after 3 days it takes 15 monies</p>
+    <button onclick="investCrypto()">Invest</button>
+</div>
+
+<div class="shop-item">
+    <h3>Free Robux</h3>
+    <p>Cost: 0 monies, does nothing</p>
+    <button onclick="buyItem('Free Robux',0)">Buy</button>
+</div>
+
+<div class="shop-item">
+    <h3>Sell all your belongings to Satan</h3>
+    <p>Cost: 0 monies, earns 150% of all purchases</p>
+    <button onclick="sellToSatan()">Sell Everything</button>
+</div>
+
+<script>
+// Simple cookie helpers
+function setCookie(name,value,days) {
+    let expires = "";
+    if(days) {
+        let date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        expires = "; expires="+date.toUTCString();
+    }
+    document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function getCookie(name) {
+    let match = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+    if(match) return match[2];
+    return null;
+}
+
+// Initialize balance and purchases
+let balance = parseInt(getCookie("xmslandCurrency")) || 100;
+let purchases = JSON.parse(getCookie("xmslandPurchases") || "[]");
+
+function updateBalance() {
+    document.getElementById("balance").innerText = "Balance: " + balance + " monies";
+    setCookie("xmslandCurrency",balance,365);
+    setCookie("xmslandPurchases",JSON.stringify(purchases),365);
+}
+
+// Basic item purchase
+function buyItem(name,cost) {
+    if(balance >= cost) {
+        balance -= cost;
+        purchases.push(name);
+        alert("You bought: " + name + "!");
+        updateBalance();
+    } else {
+        alert("Not enough monies for " + name);
+    }
+}
+
+// Buy Money meta-item
+function buyMoney() {
+    if(balance >= 10) {
+        balance -= 10;
+        balance += 15; // returns 15
+        alert("You bought money! +5 net gain!");
+        updateBalance();
+    } else {
+        alert("Not enough monies!");
+    }
+}
+
+// Cryptocurrency joke
+function investCrypto() {
+    if(balance >= 10) {
+        balance -= 10;
+        alert("You invested 10 monies in cryptocurrency. Come back in 3 days to see what happened!");
+        // store the “time” invested
+        let crypto = JSON.parse(getCookie("cryptoInvest") || "[]");
+        crypto.push({time: Date.now(), amount: 10});
+        setCookie("cryptoInvest", JSON.stringify(crypto),365);
+        updateBalance();
+    } else {
+        alert("Not enough monies!");
+    }
+}
+
+// Check crypto investments (optional)
+function checkCrypto() {
+    let crypto = JSON.parse(getCookie("cryptoInvest") || "[]");
+    let now = Date.now();
+    for(let i=0;i<crypto.length;i++) {
+        if(now - crypto[i].time >= 3*24*60*60*1000) { // 3 days
+            balance -= 15;
+            alert("Your cryptocurrency failed! Lost 15 monies!");
+            crypto.splice(i,1);
+            i--;
+        }
+    }
+    setCookie("cryptoInvest", JSON.stringify(crypto),365);
+    updateBalance();
+}
+
+// Sell everything to Satan
+function sellToSatan() {
+    if(purchases.length === 0) {
+        alert("You have nothing to sell!");
+        return;
+    }
+    let value = purchases.length; // each item counts as 1 for simplicity
+    let gain = Math.floor(value*1.5);
+    balance += gain;
+    purchases = [];
+    alert("You sold everything to Satan! You earned "+gain+" monies!");
+    updateBalance();
+}
+
+// Initialize
+updateBalance();
+
+// Optional: check crypto every page load
+checkCrypto();
+</script>
+
+</body>
+</html>
