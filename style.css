@@ -66,11 +66,14 @@ img {
 
 footer .badges {
     margin-top: 10px;
-    text-align: center;
+    display: flex;           /* makes children line up in a row */
+    justify-content: center; /* centers them horizontally */
+    gap: 5px;                /* space between badges */
+    flex-wrap: wrap;         /* optional: lets badges wrap if the screen is too narrow */
 }
 
 footer .badges img {
-    margin: 0 5px;
-    vertical-align: middle;
+    vertical-align: middle;  /* keep them aligned nicely */
 }
+
 
