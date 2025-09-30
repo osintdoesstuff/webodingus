@@ -64,3 +64,13 @@ img {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* gentle shadow for depth */
 }
 
+footer .badges {
+    margin-top: 10px;
+    text-align: center;
+}
+
+footer .badges img {
+    margin: 0 5px;
+    vertical-align: middle;
+}
+
