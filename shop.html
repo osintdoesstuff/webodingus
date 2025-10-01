@@ -48,6 +48,12 @@
 <h1>XMSland Shop</h1>
 <p id="balance">Balance: 100 monies</p>
 
+<div class="stonks-market">
+    <h3>Stonks Market™</h3>
+    <p>Current Stonks Value: <span id="stonks-value">100</span></p>
+    <p style="font-size:0.9em;">Higher = cheaper items | Lower = more expensive items</p>
+</div>
+
 <div class="shop-item">
     <h3>Invisible Hat</h3>
     <p>Cost: 20 monies</p>
@@ -219,6 +225,92 @@ function goToPrison() {
         alert("You don’t have even 1 money to go to prison! Tough luck!");
     }
 }
+
+// --- Initialize Stonks ---
+let stonksValue = parseFloat(getCookie("stonksValue")) || 100;
+const stonksDisplay = document.getElementById("stonks-value");
+
+// --- Update Stonks every 2 seconds ---
+function updateStonks() {
+    // Small random fluctuation
+    let fluctuation = (Math.random() - 0.5) * 2; // -1 to +1
+    stonksValue += fluctuation;
+
+    // Clamp between 0 and 200
+    if(stonksValue < 0) stonksValue = 0;
+    if(stonksValue > 200) stonksValue = 200;
+
+    stonksDisplay.textContent = stonksValue.toFixed(1);
+
+    setCookie("stonksValue", stonksValue.toFixed(1), 365);
+
+    // Optional: crash popup
+    if(stonksValue <= 0.5) {
+        alert("STONKS MARKET™ HAS CRASHED DUE TO FREE ROBUX INSANITY!");
+    }
+}
+
+// --- Function to get adjusted price based on stonks ---
+function getAdjustedPrice(basePrice) {
+    return Math.max(1, Math.round(basePrice * (100 / stonksValue)));
+}
+
+// --- Hook into shop purchases to impact stonks ---
+function buyItemWithStonks(name, baseCost) {
+    let cost = getAdjustedPrice(baseCost);
+    if(balance >= cost) {
+        balance -= cost;
+        purchases.push(name);
+        updateBalance();
+
+        // Impact stonks: Free Robux heavily drops it, others slightly
+        if(name === "Free Robux") {
+            stonksValue -= 0.2; 
+        } else {
+            stonksValue -= 0.05;
+        }
+
+        if(stonksValue < 0) stonksValue = 0;
+        setCookie("stonksValue", stonksValue.toFixed(1), 365);
+        updateStonks();
+    } else {
+        alert("Not enough monies for " + name + " (Adjusted cost: " + cost + ")");
+    }
+
+    checkGoToPrisonVisibility();
+}
+
+// Override the Free Robux button to use new function
+document.querySelectorAll(".shop-item button").forEach(btn => {
+    if(btn.parentElement.querySelector("h3").innerText === "Free Robux") {
+        btn.onclick = function(){ buyItemWithStonks("Free Robux", 0); }
+    }
+});
+
+// Override normal items to use stonks-adjusted prices
+document.querySelectorAll(".shop-item").forEach(itemDiv => {
+    let itemName = itemDiv.querySelector("h3").innerText;
+    if(["Invisible Hat","Useless Tick","XMSland Pro"].includes(itemName)) {
+        let baseCost = parseInt(itemDiv.querySelector("p").innerText.match(/\d+/)[0]);
+        let btn = itemDiv.querySelector("button");
+        btn.onclick = function(){ buyItemWithStonks(itemName, baseCost); }
+    }
+});
+
+// Impact stonks when selling to Satan
+const originalSellToSatan = sellToSatan;
+sellToSatan = function() {
+    originalSellToSatan();
+    stonksValue -= purchases.length * 0.1; // Selling items destabilizes market
+    if(stonksValue < 0) stonksValue = 0;
+    setCookie("stonksValue", stonksValue.toFixed(1), 365);
+    updateStonks();
+}
+
+// Initial display
+updateStonks();
+setInterval(updateStonks, 2000);
+
 
 // Run on page load and after every purchase
 checkGoToPrisonVisibility();
