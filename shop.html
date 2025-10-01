@@ -90,6 +90,13 @@
     <button onclick="sellToSatan()">Sell Everything</button>
 </div>
 
+<div class="shop-item" id="prison-item" style="display:none;">
+    <h3>Go to Prison</h3>
+    <p>Cost: 1 monies — Resets your account and removes all belongings & crypto</p>
+    <button onclick="goToPrison()">Go to Prison</button>
+</div>
+
+
 <script>
 // Simple cookie helpers
 function setCookie(name,value,days) {
@@ -186,6 +193,37 @@ function sellToSatan() {
     alert("You sold everything to Satan! You earned "+gain+" monies!");
     updateBalance();
 }
+
+function checkGoToPrisonVisibility() {
+    // List the costs of normal items (excluding Free Robux and meta items)
+    let itemCosts = [20,15,50,10,10]; // Invisible Hat, Useless Tick, XMSland Pro, Money, Cryptocurrency
+    let canAfford = itemCosts.some(cost => balance >= cost);
+    let prisonItem = document.getElementById("prison-item");
+    if(!canAfford) {
+        prisonItem.style.display = "block"; // show Go to Prison
+    } else {
+        prisonItem.style.display = "none"; // hide if you can still buy something
+    }
+}
+
+// Go to Prison function
+function goToPrison() {
+    if(balance >= 1) {
+        balance -= 1;
+        purchases = [];
+        balance = 100;
+        setCookie("cryptoInvest", JSON.stringify([]), 365);
+        alert("You’ve gone to prison! All your belongings are gone, crypto wiped, and balance reset to 100 monies.");
+        updateBalance();
+        checkGoToPrisonVisibility();
+    } else {
+        alert("You don’t have even 1 money to go to prison! Tough luck!");
+    }
+}
+
+// Run on page load and after every purchase
+checkGoToPrisonVisibility();
+
 
 // Initialize
 updateBalance();
