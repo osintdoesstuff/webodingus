@@ -130,7 +130,6 @@ function buyItem(name,cost) {
     if(balance >= cost) {
         balance -= cost;
         purchases.push(name);
-        alert("You bought: " + name + "!");
         updateBalance();
     } else {
         alert("Not enough monies for " + name);
